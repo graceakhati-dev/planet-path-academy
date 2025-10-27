@@ -1,5 +1,4 @@
 import express from "express";
-import multer from "multer";
 import {
   createCourse,
   getCourses,
@@ -7,16 +6,17 @@ import {
   updateCourse,
   deleteCourse,
 } from "../controllers/courseController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Multer setup for thumbnails
-const upload = multer({ dest: "uploads/" });
-
-router.post("/", upload.single("thumbnail"), createCourse);
+// Public routes
 router.get("/", getCourses);
 router.get("/:id", getCourseById);
-router.put("/:id", updateCourse);
-router.delete("/:id", deleteCourse);
+
+// Protected routes (Instructor/Admin)
+router.post("/", protect, createCourse);
+router.put("/:id", protect, updateCourse);
+router.delete("/:id", protect, deleteCourse);
 
 export default router;
